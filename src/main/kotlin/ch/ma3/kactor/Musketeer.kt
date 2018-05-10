@@ -1,26 +1,25 @@
 package ch.ma3.kactor
 
-import ch.ma3.kactor.bus.MessageBus
+import ch.ma3.kactor.bus.Executor
 import ch.ma3.kactor.bus.MessageBus.subscribe
 import ch.ma3.kactor.messages.Shout
+import mu.KLogging
+
+
+val ONE_FOR_ALL = "One for all"
+val ALL_FOR_ONE = "All for one!"
 
 class Musketeer(name: String) {
 
-
-    val oneForAll = "One for all"
-    val allForOne = "All for one!"
+    companion object : KLogging()
 
     init {
-        println("I'm $name.")
-        subscribe(Shout::class.java, {
-            if (it.text == oneForAll) {
-                println(allForOne)
+        logger.debug("I'm $name.")
+        Executor.register(this.javaClass)
+        subscribe(this, Shout::class.java, {
+            if (it.text == ONE_FOR_ALL) {
+                logger.debug(ALL_FOR_ONE)
             }
         })
     }
-
-    fun provoke() {
-        MessageBus.post(Shout(oneForAll))
-    }
-
 }
